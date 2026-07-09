@@ -1,0 +1,36 @@
+# --- NEVER COMMIT THESE ---
+vendor_keys.json          # your private signing key
+issued_licenses.json      # your customer/key history
+*.licx                    # exported license backups
+*.key                     # generated license key files
+transfer_request.txt      # customer transfer requests
+*.bak_*                   # injector backups of user files
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+*.spec
+
+# --- Nuitka / PyArmor build artifacts ---
+*.build/
+*.dist/
+*.onefile-build/
+.pyarmor/
+pyarmor_runtime*/
+
+# --- Virtual envs ---
+.venv/
+venv/
+env/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
