@@ -17,21 +17,18 @@ included automatically. Output lands in ./dist.
 import subprocess
 import sys
 import os
-import shutil
 import argparse
+import importlib.util
 
-def _ensure(pkg, import_name=None):
-    try:
-        __import__(import_name or pkg)
-    except ImportError:
-        print(f"[build] installing {pkg} ...")
-        base = [sys.executable, "-m", "pip", "install", pkg]
-        try:
-            subprocess.check_call(base)
-        except subprocess.CalledProcessError:
-            subprocess.check_call(base + ["--break-system-packages"])
+SDK_MODULES = ["license_sdk", "license_dialog", "help_tips"]
 
-SDK_MODULES = ["license_sdk", "license_dialog"]
+
+def _require_module(module_name: str, install_name: str):
+    if importlib.util.find_spec(module_name) is None:
+        raise SystemExit(
+            f"[build] Missing build dependency: {install_name}\n"
+            f"[build] Install it first: {sys.executable} -m pip install {install_name}"
+        )
 
 
 def find_sdk_modules(entry_dir):
@@ -44,7 +41,7 @@ def find_sdk_modules(entry_dir):
 
 def build_nuitka(args):
     if not args.dry_run:
-        _ensure("nuitka")
+        _require_module("nuitka", "nuitka")
     entry_dir = os.path.dirname(os.path.abspath(args.script)) or "."
     cmd = [
         sys.executable, "-m", "nuitka",
@@ -72,7 +69,7 @@ def build_nuitka(args):
 
 def build_pyarmor(args):
     if not args.dry_run:
-        _ensure("pyarmor")
+        _require_module("pyarmor", "pyarmor")
     entry_dir = os.path.dirname(os.path.abspath(args.script)) or "."
     extras = [os.path.join(entry_dir, m + ".py")
               for m in find_sdk_modules(entry_dir)]
